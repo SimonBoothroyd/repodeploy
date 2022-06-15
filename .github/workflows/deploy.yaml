@@ -1,0 +1,47 @@
+name: Build conda package
+on: [push]
+
+jobs:
+  build:
+    name: ${{ matrix.CONFIG }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - CONFIG: linux_64_
+            UPLOAD_PACKAGES: 'False'
+            os: ubuntu
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Conda Environment
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        python-version: "3.9"
+
+    - name: Render feedstock
+      shell: bash -l {0}
+      run: |
+        
+        git config --global user.email "action@github.com"
+        git config --global user.name "GitHub Action"
+        
+        conda install --yes -c conda-forge conda-smithy
+        
+        cd devtools
+        conda smithy init deploy
+        cd *-feedstock
+        conda smithy rerender
+
+    - name: Build
+      env:
+        CONFIG: ${{ matrix.CONFIG }}
+        UPLOAD_PACKAGES: ${{ matrix.UPLOAD_PACKAGES }}
+        CI: github_actions
+      shell: bash
+      run: |
+        cd devtools/*-feedstock
+        docker run --rm --privileged multiarch/qemu-user-static:register --reset --credential yes
+        ./.scripts/run_docker_build.sh
