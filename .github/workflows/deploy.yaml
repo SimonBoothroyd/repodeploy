@@ -40,6 +40,7 @@ jobs:
         CONFIG: ${{ matrix.CONFIG }}
         UPLOAD_PACKAGES: ${{ matrix.UPLOAD_PACKAGES }}
         CI: github_actions
+        BINSTAR_TOKEN: ${{ secrets.BINSTAR_TOKEN }}
       shell: bash
       run: |
         cd devtools/*-feedstock
