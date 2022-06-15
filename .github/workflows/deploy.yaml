@@ -10,7 +10,7 @@ jobs:
       matrix:
         include:
           - CONFIG: linux_64_
-            UPLOAD_PACKAGES: 'False'
+            UPLOAD_PACKAGES: 'True'
             os: ubuntu
     steps:
     - name: Checkout code
