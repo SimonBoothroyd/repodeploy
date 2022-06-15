@@ -1,0 +1,5 @@
+include LICENSE
+include MANIFEST.in
+
+graft repodata
+global-exclude *.py[cod] __pycache__ *.so
